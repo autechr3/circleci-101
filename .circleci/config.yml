@@ -7,11 +7,13 @@ jobs:
       - checkout
       - run: echo "A first hello"
       - run: mkdir -p my_workspace
-      - run: echo "Trying out workspaces" > my_workspaces/echo-output
+      - run: echo "Trying out workspaces" > my_workspace/echo-output
       - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
           root: my_workspace
+          # Must be relative path from root
           paths:
-            - echo_output
+            - echo-output      
   two:
     docker:
       - image: circleci/ruby:2.4.1
@@ -19,6 +21,7 @@ jobs:
       - checkout
       - run: echo "A more familiar hi"  
       - attach_workspace:
+          # Must be absolute path or relative path from working_directory
           at: my_workspace
 
       - run: |
@@ -32,6 +35,6 @@ workflows:
   one_and_two:
     jobs:
       - one
-      - two
+      - two:
           requires:
             - one
